@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 const Dashboard = () => {
   const pathname = usePathname();
   console.log(pathname);
+
   return (
     <SectionWrapper>
       <div className="w-full p-5 flex flex-col gap-5 items-start">

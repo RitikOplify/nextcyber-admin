@@ -5,10 +5,28 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { IoIosArrowForward } from "react-icons/io";
+import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { asyncCurrentUser } from "@/store/actions/authActions";
 
 const DashboardLayout = ({ children }) => {
   const [sidebarCollapse, setSidebarCollapse] = useState(false);
+  const dispatch = useDispatch();
+  const router = useRouter();
   const [responsiveLayoutActive, setResponsiveLayoutActive] = useState(false);
+  const { user, isLoading } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user === null) {
+      dispatch(asyncCurrentUser());
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (!isLoading && user === null) {
+      router.replace("/");
+    }
+  }, [user, isLoading, router]);
 
   const pathname = usePathname();
 
@@ -54,7 +72,13 @@ const DashboardLayout = ({ children }) => {
     const selectedSegments = segments.slice(0, index + 1);
     return "/" + selectedSegments.join("/");
   };
-
+  if (isLoading || user === null) {
+    return (
+      <div className="h-screen flex justify-center items-center">
+        <div className="animate-spin h-10 w-10 border-4 border-t-transparent border-primary rounded-full" />
+      </div>
+    );
+  }
   return (
     <section className="w-full h-screen relative">
       <SideNav

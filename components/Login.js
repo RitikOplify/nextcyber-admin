@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -8,6 +8,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { asyncCurrentUser, asyncSigninUser } from "@/store/actions/authActions";
 
 // ✅ Validation schema
 const loginSchema = z.object({
@@ -17,7 +19,7 @@ const loginSchema = z.object({
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
-
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const {
@@ -29,21 +31,29 @@ const Login = () => {
     mode: "onBlur", // validates on blur (optimized for UX)
   });
 
-  const onSubmit = async (data) => {
-    try {
-      setLoading(true);
-      console.log("Submitting login data:", data);
-      setTimeout(() => {
-        router.push("/dashboard/students");
-        toast.success("Logged in");
-        setLoading(false);
-      }, 2000);
-      // 🔥 call your API here, e.g. await login(data);
-    } catch (err) {
-      console.error("Login error:", err);
-    } finally {
-      // setLoading(false);
+  const { user, isLoading } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (user === null) {
+      dispatch(asyncCurrentUser());
     }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.replace("/dashboard/students");
+    }
+  }, [user, isLoading, router]);
+
+  if (isLoading || user) {
+    return (
+      <div className="h-screen w-full flex justify-center items-center">
+        <div className="animate-spin h-10 w-10 border-4 border-t-transparent border-primary rounded-full" />
+      </div>
+    );
+  }
+  const onSubmit = async (data) => {
+    dispatch(asyncSigninUser(data, setLoading));
   };
   return (
     <SectionWrapper>

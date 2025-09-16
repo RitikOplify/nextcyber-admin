@@ -16,16 +16,22 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import toast from "react-hot-toast";
+import { asyncSignOutUser } from "@/store/actions/authActions";
+import { useDispatch } from "react-redux";
 
 const SideNav = ({ sidebarCollapse, setSidebarCollapse }) => {
   // const { sidebarCollapse } = useSelector((state) => state.appSetting);
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const router = useRouter();
 
   const isAuthencated = true;
   const pathname = usePathname();
 
   console.log(pathname);
+  const handleLogout = async () => {
+    await dispatch(asyncSignOutUser());
+    router.push("/");
+  };
 
   // useEffect(() => {
   //   // console.log(pathname);
@@ -164,10 +170,7 @@ const SideNav = ({ sidebarCollapse, setSidebarCollapse }) => {
           className={`flex items-center py-2 gap-3 w-full cursor-pointer group transition-colors duration-200  ${
             sidebarCollapse ? "px-0 justify-center" : "justify-normal px-4.5"
           }`}
-          onClick={() => {
-            router.push("/");
-            toast.success("Logged out successfully");
-          }}
+          onClick={handleLogout}
         >
           <span className={`text-xl text-icon group-hover:text-primary`}>
             <BiLogOut />
