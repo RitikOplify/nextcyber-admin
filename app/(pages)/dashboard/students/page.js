@@ -226,7 +226,7 @@ export default function Page() {
                         <div className=" flex gap-1 items-center">
                           <Link href={`/student/${user.id}`}>
                             <img
-                              src="/Icons/view.svg"
+                              src="/icons/view.svg"
                               className="h-6 w-6"
                               alt="View"
                               title="View"
@@ -237,7 +237,7 @@ export default function Page() {
                             title="Delete"
                           >
                             <img
-                              src="/Icons/delete.svg"
+                              src="/icons/delete.svg"
                               className="h-6 w-6"
                               alt="Delete"
                             />
