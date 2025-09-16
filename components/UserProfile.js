@@ -61,7 +61,7 @@ const UserProfile = () => {
     if (files.resume) formData.append("resume", files.resume);
 
     dispatch(asyncCreateStudent(formData));
-    router.push("/dashboard/students")
+    router.push("/dashboard/students");
   };
 
   return (

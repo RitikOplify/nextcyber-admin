@@ -119,7 +119,7 @@ export default function Page() {
   }
 
   return (
-    <div className=" w-full p-6">
+    <div className=" w-full px-6 py-4">
       <h2 className="text-heading-secondary font-semibold text-lg mb-4">
         Students
       </h2>
@@ -128,7 +128,7 @@ export default function Page() {
         <div className="w-full flex items-center justify-between p-5 flex-wrap gap-5">
           {/* search + filter */}
           <div className="flex gap-5 items-center flex-wrap text-[13px]">
-            <div className="flex items-center relative py-3 border border-input px-4 gap-2 rounded-md font-normal text-text-ternary">
+            <div className="flex items-center relative py-3 border border-border px-4 gap-2 rounded-md font-normal text-text-ternary">
               <IoIosSearch size={20} />
               <input
                 type="text"
@@ -145,7 +145,7 @@ export default function Page() {
                 />
               )}
             </div>
-            <div className="relative border border-input rounded-md">
+            <div className="relative border border-border rounded-md">
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
