@@ -291,9 +291,7 @@ const TechnicalForm = ({ form }) => {
             isOpen ? "rounded-t-[8px] border-b-0" : "rounded-[8px]"
           } outline-none flex justify-between items-center bg-white`}
         >
-          <span className={selectedValue ? "text-[#333]" : "text-[#999]"}>
-            {selectedValue || placeholder}
-          </span>
+          <span className={"text-black"}>{placeholder}</span>
           <IoIosArrowDown
             className={`text-2xl text-[#6F6F6F] transition-transform ${
               isOpen ? "rotate-180" : ""
@@ -385,7 +383,7 @@ const TechnicalForm = ({ form }) => {
         </label>
         <div className="space-y-4">
           {/* Pre-selected certificates display */}
-          <div className="flex flex-wrap gap-2">
+          {/* <div className="flex flex-wrap gap-2">
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center">
               CCNA
               <button
@@ -422,7 +420,7 @@ const TechnicalForm = ({ form }) => {
                 <IoCloseCircle size={14} />
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Custom select for additional certificates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -466,7 +464,7 @@ const TechnicalForm = ({ form }) => {
         </label>
         <div className="space-y-4">
           {/* Pre-selected skills display */}
-          <div className="flex flex-wrap gap-2">
+          {/* <div className="flex flex-wrap gap-2">
             <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center">
               Analytical Thinking
               <button
@@ -487,7 +485,7 @@ const TechnicalForm = ({ form }) => {
                 <IoCloseCircle size={14} />
               </button>
             </div>
-          </div>
+          </div> */}
 
           {/* Custom select for additional skills */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

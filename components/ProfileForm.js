@@ -466,7 +466,7 @@ const ProfileForm = ({
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
+        {/* <div className="flex justify-end space-x-4 pt-6 border-t border-gray-200">
           <button
             type="button"
             className="px-6 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
@@ -485,7 +485,7 @@ const ProfileForm = ({
           >
             Save Changes
           </button>
-        </div>
+        </div> */}
       </form>
 
       {/* Modals */}

@@ -224,14 +224,14 @@ export default function Page() {
                       </td>
                       <td className="py-3 px-5 border-b border-border">
                         <div className=" flex gap-1 items-center">
-                          <Link href={`/student/${user.id}`}>
+                          <button>
                             <img
                               src="/icons/view.svg"
                               className="h-6 w-6"
                               alt="View"
                               title="View"
                             />
-                          </Link>
+                          </button>
                           <button
                             onClick={() => handleDelete(user.id)}
                             title="Delete"

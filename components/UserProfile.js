@@ -75,6 +75,33 @@ const UserProfile = () => {
     setActiveTab(newTab);
   };
 
+  // Handle Next button click with validation
+  const handleNext = async () => {
+    const currentIndex = tabs.findIndex((tab) => tab.key === activeTab);
+
+    if (currentIndex < tabs.length - 1) {
+      const nextTab = tabs[currentIndex + 1].key;
+
+      // Use the same validation logic as handleTabChange
+      const isValid = await validateCurrentStep();
+      if (!isValid) {
+        // Show error message or handle invalid state
+        console.log("Current step has validation errors");
+        return;
+      }
+
+      setActiveTab(nextTab);
+    }
+  };
+
+  // Handle Previous button click (no validation needed)
+  const handlePrevious = () => {
+    const currentIndex = tabs.findIndex((tab) => tab.key === activeTab);
+    if (currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1].key);
+    }
+  };
+
   const renderActiveForm = () => {
     switch (activeTab) {
       case "account":
@@ -189,24 +216,51 @@ const UserProfile = () => {
 
       {renderActiveForm()}
 
-      {activeTab === "technical" && (
-        <div className="flex justify-end space-x-4 pt-6">
-          <button
-            type="button"
-            className="px-6 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50"
-            onClick={() => form.reset()}
-          >
-            Discard
-          </button>
-          <button
-            type="button"
-            onClick={handleFinalSubmit}
-            className="px-6 py-2 bg-blue-600 rounded text-white hover:bg-blue-700"
-          >
-            Save
-          </button>
+      <div className="flex justify-between items-center pt-6">
+        <div>
+          {/* Previous Button */}
+          {activeTab !== "account" && (
+            <button
+              type="button"
+              onClick={handlePrevious}
+              className="px-6 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50"
+            >
+              Previous
+            </button>
+          )}
         </div>
-      )}
+
+        <div className="flex space-x-4">
+          {activeTab === "technical" ? (
+            // Final Submit Buttons - Only show on last tab
+            <>
+              <button
+                type="button"
+                className="px-6 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50"
+                onClick={() => form.reset()}
+              >
+                Discard
+              </button>
+              <button
+                type="button"
+                onClick={handleFinalSubmit}
+                className="px-6 py-2 bg-blue-600 rounded text-white hover:bg-blue-700"
+              >
+                Save
+              </button>
+            </>
+          ) : (
+            // Next Button with validation - Show on all tabs except last
+            <button
+              type="button"
+              onClick={handleNext}
+              className="px-6 py-2 bg-blue-600 rounded text-white hover:bg-blue-700"
+            >
+              Next
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
