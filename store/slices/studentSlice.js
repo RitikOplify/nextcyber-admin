@@ -13,9 +13,12 @@ export const studentReducer = createSlice({
     addStudent: (state, action) => {
       state.student.push(action.payload);
     },
+    removeStudent: (state, action) => {
+      state.student = state.student.filter((stu) => stu.id !== action.payload);
+    },
   },
 });
 
-export const { setStudent, addStudent } = studentReducer.actions;
+export const { setStudent, addStudent, removeStudent } = studentReducer.actions;
 
 export default studentReducer.reducer;

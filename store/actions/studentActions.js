@@ -1,6 +1,10 @@
-import { addStudent, setStudent } from "../slices/studentSlice";
+import { addStudent, removeStudent, setStudent } from "../slices/studentSlice";
 import toast from "react-hot-toast";
-import { addStudentApi, getStudentApi } from "@/api/studentApi.js";
+import {
+  addStudentApi,
+  deleteStudentApi,
+  getStudentApi,
+} from "@/api/studentApi.js";
 import { fa } from "zod/v4/locales";
 
 const getErrorMessage = (error) =>
@@ -48,3 +52,15 @@ export const asyncGetStudents = (params, setIsLoading) => async (dispatch) => {
     if (typeof setIsLoading === "function") setIsLoading(false);
   }
 };
+
+export const asyncDeleteStudent =
+  (id, onSuccess, onError) => async (dispatch) => {
+    try {
+      await deleteStudentApi(id);
+      dispatch(removeStudent(id));
+      if (typeof onSuccess === "function") onSuccess();
+    } catch (error) {
+      console.error(getErrorMessage(error));
+      if (typeof onError === "function") onError(getErrorMessage(error));
+    }
+  };

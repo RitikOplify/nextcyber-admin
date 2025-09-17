@@ -11,14 +11,19 @@ import {
   IoMdClose,
 } from "react-icons/io";
 import Link from "next/link";
-import { asyncGetStudents } from "@/store/actions/studentActions";
+import {
+  asyncDeleteStudent,
+  asyncGetStudents,
+} from "@/store/actions/studentActions";
+import DeleteModel from "@/components/model/DeleteModel";
 
 const statusOptions = ["ALL", "ACTIVE", "INACTIVE"];
 
 export default function Page() {
   const dispatch = useDispatch();
   const { student } = useSelector((state) => state.students);
-
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [selectedStudentId, setStudent] = useState(null);
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [sortBy, setSortBy] = useState("createdAt");
@@ -119,139 +124,151 @@ export default function Page() {
   }
 
   return (
-    <div className=" w-full px-6 py-4">
-      <h2 className="text-heading-secondary font-semibold text-lg mb-4">
-        Students
-      </h2>
+    <>
+      <div className=" w-full px-6 py-4">
+        <h2 className="text-heading-secondary font-semibold text-lg mb-4">
+          Students
+        </h2>
 
-      <div className="overflow-auto rounded-[10px] border border-border">
-        <div className="w-full flex items-center justify-between p-5 flex-wrap gap-5">
-          {/* search + filter */}
-          <div className="flex gap-5 items-center flex-wrap text-[13px]">
-            <div className="flex items-center relative py-3 border border-border px-4 gap-2 rounded-md font-normal text-text-ternary">
-              <IoIosSearch size={20} />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search students..."
-                className="outline-none border-none text-heading-secondary"
-              />
-              {searchTerm && (
-                <IoMdClose
-                  size={20}
-                  onClick={() => setSearchTerm("")}
-                  className="hover:text-heading-secondary absolute right-4 cursor-pointer"
+        <div className="overflow-auto rounded-[10px] border border-border">
+          <div className="w-full flex items-center justify-between p-5 flex-wrap gap-5">
+            {/* search + filter */}
+            <div className="flex gap-5 items-center flex-wrap text-[13px]">
+              <div className="flex items-center relative py-3 border border-border px-4 gap-2 rounded-md font-normal text-text-ternary">
+                <IoIosSearch size={20} />
+                <input
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search students..."
+                  className="outline-none border-none text-heading-secondary"
                 />
+                {searchTerm && (
+                  <IoMdClose
+                    size={20}
+                    onClick={() => setSearchTerm("")}
+                    className="hover:text-heading-secondary absolute right-4 cursor-pointer"
+                  />
+                )}
+              </div>
+              <div className="relative border border-border rounded-md">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="outline-none appearance-none w-full pl-4 pr-8 py-3 cursor-pointer text-heading-secondary font-normal"
+                >
+                  {statusOptions.map((status) => (
+                    <option key={status} value={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
+                  <IoIosArrowDown size={18} />
+                </div>
+              </div>
+              {isSearching && (
+                <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-primary rounded-full" />
               )}
             </div>
-            <div className="relative border border-border rounded-md">
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="outline-none appearance-none w-full pl-4 pr-8 py-3 cursor-pointer text-heading-secondary font-normal"
-              >
-                {statusOptions.map((status) => (
-                  <option key={status} value={status}>
-                    {status}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-2 flex items-center pointer-events-none">
-                <IoIosArrowDown size={18} />
-              </div>
-            </div>
-            {isSearching && (
-              <div className="animate-spin h-4 w-4 border-2 border-t-transparent border-primary rounded-full" />
-            )}
+            <Link
+              href={"/dashboard/students/add-new"}
+              className="flex items-center gap-2 bg-primary text-white px-4 py-3 rounded-md text-[13px] font-semibold"
+            >
+              <AiOutlinePlus size={18} />
+              Add Student
+            </Link>
           </div>
-          <Link
-            href={"/dashboard/students/add-new"}
-            className="flex items-center gap-2 bg-primary text-white px-4 py-3 rounded-md text-[13px] font-semibold"
-          >
-            <AiOutlinePlus size={18} />
-            Add Student
-          </Link>
-        </div>
 
-        {student.length > 0 ? (
-          <>
-            <div className="relative sm:max-h-[calc(100vh-339.84px)] lg:max-h-[calc(100vh-277.17px)] overflow-auto table-scrollbar">
-              <table className="min-w-full border-separate border-spacing-0">
-                <thead className="sticky top-0 bg-white text-left text-[13px] text-text font-semibold">
-                  <tr className="bg-background/40 whitespace-nowrap">
-                    <th className="py-3 px-5 border border-border">Profile</th>
-                    <th className="py-3 px-5 border border-border">Name</th>
-                    <th className="py-3 px-5 border border-border">Location</th>
-                    <th className="py-3 px-5 border border-border">Currency</th>
-                    <th className="py-3 px-5 border border-border">Gender</th>
-                    <th className="py-3 px-5 border border-border">Status</th>
-                    <th className="py-3 px-5 border border-border">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm font-medium text-text-secondary">
-                  {student.map((user, i) => (
-                    <tr key={i} className="whitespace-nowrap">
-                      <td className="py-3 px-5 border-b border-border">
-                        <img
-                          src={user.profilePicture.url}
-                          alt={user.firstName}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                      </td>
-                      <td className="py-3 px-5 border-b border-border">
-                        {user.firstName} {user.lastName}
-                      </td>
-                      <td className="py-3 px-5 border-b border-border">
-                        {user.location}
-                      </td>
-                      <td className="py-3 px-5 border-b border-border">
-                        {user.currency}
-                      </td>
-                      <td className="py-3 px-5 border-b border-border capitalize">
-                        {user.gender}
-                      </td>
-                      <td className="py-3 px-5 border-b border-border">
-                        <span
-                          className={`px-2 py-1 rounded text-xs font-medium ${
-                            user.isActive == "ACTIVE"
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {user.isActive}
-                        </span>
-                      </td>
-                      <td className="py-3 px-5 border-b border-border">
-                        <div className=" flex gap-1 items-center">
-                          <button>
-                            <img
-                              src="/icons/view.svg"
-                              className="h-6 w-6"
-                              alt="View"
-                              title="View"
-                            />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(user.id)}
-                            title="Delete"
-                          >
-                            <img
-                              src="/icons/delete.svg"
-                              className="h-6 w-6"
-                              alt="Delete"
-                            />
-                          </button>
-                        </div>
-                      </td>
+          {student.length > 0 ? (
+            <>
+              <div className="relative sm:max-h-[calc(100vh-339.84px)] lg:max-h-[calc(100vh-277.17px)] overflow-auto table-scrollbar">
+                <table className="min-w-full border-separate border-spacing-0">
+                  <thead className="sticky top-0 bg-white text-left text-[13px] text-text font-semibold">
+                    <tr className="bg-background/40 whitespace-nowrap">
+                      <th className="py-3 px-5 border border-border">
+                        Profile
+                      </th>
+                      <th className="py-3 px-5 border border-border">Name</th>
+                      <th className="py-3 px-5 border border-border">
+                        Location
+                      </th>
+                      <th className="py-3 px-5 border border-border">
+                        Currency
+                      </th>
+                      <th className="py-3 px-5 border border-border">Gender</th>
+                      <th className="py-3 px-5 border border-border">Status</th>
+                      <th className="py-3 px-5 border border-border">
+                        Actions
+                      </th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody className="text-sm font-medium text-text-secondary">
+                    {student.map((user, i) => (
+                      <tr key={i} className="whitespace-nowrap">
+                        <td className="py-3 px-5 border-b border-border">
+                          <img
+                            src={user.profilePicture.url}
+                            alt={user.firstName}
+                            className="h-10 w-10 rounded-full object-cover"
+                          />
+                        </td>
+                        <td className="py-3 px-5 border-b border-border">
+                          {user.firstName} {user.lastName}
+                        </td>
+                        <td className="py-3 px-5 border-b border-border">
+                          {user.location}
+                        </td>
+                        <td className="py-3 px-5 border-b border-border">
+                          {user.currency}
+                        </td>
+                        <td className="py-3 px-5 border-b border-border capitalize">
+                          {user.gender}
+                        </td>
+                        <td className="py-3 px-5 border-b border-border">
+                          <span
+                            className={`px-2 py-1 rounded text-xs font-medium ${
+                              user.isActive == "ACTIVE"
+                                ? "bg-green-100 text-green-700"
+                                : "bg-red-100 text-red-700"
+                            }`}
+                          >
+                            {user.isActive}
+                          </span>
+                        </td>
+                        <td className="py-3 px-5 border-b border-border">
+                          <div className=" flex gap-1 items-center">
+                            <button>
+                              <img
+                                src="/icons/view.svg"
+                                className="h-6 w-6"
+                                alt="View"
+                                title="View"
+                              />
+                            </button>
+                            <button
+                              onClick={() => {
+                                setStudent(user.id);
+                                setDeleteOpen(true);
+                              }}
+                              title="Delete"
+                            >
+                              <img
+                                src="/icons/delete.svg"
+                                className="h-6 w-6"
+                                alt="Delete"
+                              />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-            {/* Pagination */}
-            {/* <div className="flex items-center justify-between px-5 py-3 border-t border-border text-sm">
+              {/* Pagination */}
+              {/* <div className="flex items-center justify-between px-5 py-3 border-t border-border text-sm">
               <div className="flex items-center gap-1.5">
                 <span className="text-text-secondary">Rows per page</span>
                 <div className="relative border border-input rounded-md">
@@ -303,24 +320,37 @@ export default function Page() {
                 </button>
               </div>
             </div> */}
-          </>
-        ) : (
-          <div className="text-center text-text-secondary border-t border-border">
-            <p className="py-4 capitalize">No students found.</p>
-          </div>
-        )}
+            </>
+          ) : (
+            <div className="text-center text-text-secondary border-t border-border">
+              <p className="py-4 capitalize">No students found.</p>
+            </div>
+          )}
+        </div>
+
+        {/* Modals */}
+        {/* <CreateStudentModal isOpen={createStudentOpen} onClose={() => setCreateStudentOpen(false)} />
+
+      // // <DeleteModel
+      // //   isOpen={isOpen}
+      // //   id={selectedStudentId}
+      // //   onClose={() => setIsOpen(false)}
+      // //   label="Student"
+      // //   onDelete={asyncDeleteStudent}
+      // /> */}
       </div>
-
-      {/* Modals */}
-      {/* <CreateStudentModal isOpen={createStudentOpen} onClose={() => setCreateStudentOpen(false)} />
-
-      <DeleteModel
-        isOpen={isOpen}
-        id={selectedStudentId}
-        onClose={() => setIsOpen(false)}
-        label="Student"
-        onDelete={asyncDeleteStudent}
-      /> */}
-    </div>
+      {deleteOpen && (
+        <DeleteModel
+          isOpen={deleteOpen}
+          id={selectedStudentId}
+          onClose={() => {
+            setStudent(null);
+            setDeleteOpen(false);
+          }}
+          label="Student"
+          onDelete={asyncDeleteStudent}
+        />
+      )}
+    </>
   );
 }
