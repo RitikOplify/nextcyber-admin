@@ -316,7 +316,7 @@ const ProfileForm = ({
             <div className="text-center w-1/2 py-8 text-gray-500 border-2 border-dashed border-gray-300 rounded-lg">
               <FiFileText size={48} className="mx-auto mb-4 text-gray-400" />
               <p className="font-medium">No education records added yet</p>
-              <p className="text-sm">Click "Add Education" to get started</p>
+              <p className="text-sm">Click &quot;Add Education&quot; to get started</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -405,7 +405,7 @@ const ProfileForm = ({
               <FiFileText size={48} className="mx-auto mb-4 text-gray-400" />
               <p className="font-medium">No work experience added yet</p>
               <p className="text-sm">
-                Click "Add Work Experience" to get started
+                Click &quot;Add Work Experience&quot; to get started
               </p>
             </div>
           ) : (
