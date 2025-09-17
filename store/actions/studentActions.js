@@ -9,7 +9,7 @@ const getErrorMessage = (error) =>
   "Something went wrong. Please try again.";
 
 export const asyncCreateStudent =
-  (student, setIsLoading) => async (dispatch) => {
+  (student, setIsLoading, router) => async (dispatch) => {
     if (typeof setIsLoading === "function") setIsLoading(true);
     try {
       await toast.promise(addStudentApi(student), {
@@ -17,6 +17,7 @@ export const asyncCreateStudent =
         success: (response) => {
           const { data } = response;
           dispatch(addStudent(data.student));
+          router.push("/dashboard/students");
           return data.message || "Student Created successfully!";
         },
         error: (err) => {

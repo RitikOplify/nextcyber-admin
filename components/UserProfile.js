@@ -187,8 +187,7 @@ const UserProfile = () => {
     console.log("Final FormData:", formData);
 
     try {
-      await dispatch(asyncCreateStudent(formData));
-      // router.push("/dashboard/students");
+      await dispatch(asyncCreateStudent(formData, "", router));
     } catch (error) {
       console.error("Error submitting form:", error);
     }
