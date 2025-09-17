@@ -8,7 +8,7 @@ const getErrorMessage = (error) =>
   "Something went wrong. Please try again.";
 
 export const asyncCreateCompany =
-  (company, setIsLoading) => async (dispatch) => {
+  (company, setIsLoading, router) => async (dispatch) => {
     if (typeof setIsLoading === "function") setIsLoading(true);
     try {
       await toast.promise(addCompanyApi(company), {
@@ -16,6 +16,7 @@ export const asyncCreateCompany =
         success: (response) => {
           const { data } = response;
           dispatch(addCompany(data.company));
+          router.push("/dashboard/companies");
           return data.message || "Company Created successfully!";
         },
         error: (err) => {

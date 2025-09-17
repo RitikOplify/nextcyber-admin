@@ -56,8 +56,9 @@ export const asyncGetStudents = (params, setIsLoading) => async (dispatch) => {
 export const asyncDeleteStudent =
   (id, onSuccess, onError) => async (dispatch) => {
     try {
-      await deleteStudentApi(id);
+      const { data } = await deleteStudentApi(id);
       dispatch(removeStudent(id));
+      toast.success(data.message);
       if (typeof onSuccess === "function") onSuccess();
     } catch (error) {
       console.error(getErrorMessage(error));
