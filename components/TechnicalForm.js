@@ -1,7 +1,5 @@
 "use client";
-// TechnicalForm.js
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useState, useEffect } from "react";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoCloseCircle } from "react-icons/io5";
 
@@ -13,6 +11,7 @@ const TechnicalForm = ({ form }) => {
     setValue,
     watch,
     clearErrors,
+    trigger,
   } = form;
 
   const [dropdownStates, setDropdownStates] = useState({});
@@ -21,6 +20,23 @@ const TechnicalForm = ({ form }) => {
   // State for selected values
   const [selectedCertificates, setSelectedCertificates] = useState([]);
   const [selectedSkills, setSelectedSkills] = useState([]);
+
+  // Register fields for validation
+  useEffect(() => {
+    register("contractType");
+    register("remotePolicy");
+    register("certificates");
+    register("skills");
+  }, [register]);
+
+  // Update form values when state changes
+  useEffect(() => {
+    setValue("certificates", selectedCertificates);
+  }, [selectedCertificates, setValue]);
+
+  useEffect(() => {
+    setValue("skills", selectedSkills);
+  }, [selectedSkills, setValue]);
 
   // Options for contract types (single select)
   const contractTypes = [
@@ -195,6 +211,7 @@ const TechnicalForm = ({ form }) => {
     setValue(name, value);
     setDropdownStates((prev) => ({ ...prev, [name]: false }));
     clearErrors(name);
+    trigger(name);
   };
 
   // Handle multi-select for certificates
@@ -202,7 +219,6 @@ const TechnicalForm = ({ form }) => {
     if (!selectedCertificates.includes(certificate)) {
       const newCertificates = [...selectedCertificates, certificate];
       setSelectedCertificates(newCertificates);
-      setValue("certificates", newCertificates);
       clearErrors("certificates");
     }
     setDropdownStates((prev) => ({ ...prev, certificates: false }));
@@ -213,7 +229,6 @@ const TechnicalForm = ({ form }) => {
     if (!selectedSkills.includes(skill)) {
       const newSkills = [...selectedSkills, skill];
       setSelectedSkills(newSkills);
-      setValue("skills", newSkills);
       clearErrors("skills");
     }
     setDropdownStates((prev) => ({ ...prev, skills: false }));
@@ -225,14 +240,12 @@ const TechnicalForm = ({ form }) => {
       (cert) => cert !== certificate
     );
     setSelectedCertificates(newCertificates);
-    setValue("certificates", newCertificates);
   };
 
   // Remove selected skill
   const removeSkill = (skill) => {
     const newSkills = selectedSkills.filter((s) => s !== skill);
     setSelectedSkills(newSkills);
-    setValue("skills", newSkills);
   };
 
   // Radio button component
@@ -245,6 +258,7 @@ const TechnicalForm = ({ form }) => {
         checked={isSelected}
         onChange={onChange}
         className="sr-only"
+        {...register(name)}
       />
       <div
         className={`w-4 h-4 rounded-full border-2 mr-3 flex items-center justify-center ${
@@ -306,13 +320,6 @@ const TechnicalForm = ({ form }) => {
           </div>
         )}
 
-        {!isMulti && (
-          <input
-            type="hidden"
-            {...register(name, { required: `${placeholder} is required` })}
-          />
-        )}
-
         {error && <p className="text-red-500 text-sm mt-1">{error.message}</p>}
       </div>
     );
@@ -340,7 +347,10 @@ const TechnicalForm = ({ form }) => {
               value={type}
               label={type}
               isSelected={watchedValues.contractType === type}
-              onChange={(e) => setValue("contractType", e.target.value)}
+              onChange={(e) => {
+                setValue("contractType", e.target.value);
+                clearErrors("contractType");
+              }}
             />
           ))}
         </div>
@@ -359,7 +369,10 @@ const TechnicalForm = ({ form }) => {
               value={policy}
               label={policy}
               isSelected={watchedValues.remotePolicy === policy}
-              onChange={(e) => setValue("remotePolicy", e.target.value)}
+              onChange={(e) => {
+                setValue("remotePolicy", e.target.value);
+                clearErrors("remotePolicy");
+              }}
             />
           ))}
         </div>
@@ -380,7 +393,7 @@ const TechnicalForm = ({ form }) => {
                 onClick={() => removeCertificate("CCNA")}
                 className="ml-2 text-blue-600 hover:text-blue-800"
               >
-                {/* <IoCloseCircle size={14} /> */}
+                <IoCloseCircle size={14} />
               </button>
             </div>
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center">
@@ -392,7 +405,7 @@ const TechnicalForm = ({ form }) => {
                 }
                 className="ml-2 text-blue-600 hover:text-blue-800"
               >
-                {/* <IoCloseCircle size={14} /> */}
+                <IoCloseCircle size={14} />
               </button>
             </div>
             <div className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm flex items-center">
@@ -406,7 +419,7 @@ const TechnicalForm = ({ form }) => {
                 }
                 className="ml-2 text-blue-600 hover:text-blue-800"
               >
-                {/* <IoCloseCircle size={14} /> */}
+                <IoCloseCircle size={14} />
               </button>
             </div>
           </div>
@@ -461,7 +474,7 @@ const TechnicalForm = ({ form }) => {
                 onClick={() => removeSkill("Analytical Thinking")}
                 className="ml-2 text-purple-600 hover:text-purple-800"
               >
-                {/* <IoCloseCircle size={14} /> */}
+                <IoCloseCircle size={14} />
               </button>
             </div>
             <div className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm flex items-center">
@@ -471,7 +484,7 @@ const TechnicalForm = ({ form }) => {
                 onClick={() => removeSkill("Advanced Red Team Operations")}
                 className="ml-2 text-purple-600 hover:text-purple-800"
               >
-                {/* <IoCloseCircle size={14} /> */}
+                <IoCloseCircle size={14} />
               </button>
             </div>
           </div>
@@ -502,7 +515,7 @@ const TechnicalForm = ({ form }) => {
                     onClick={() => removeSkill(skill)}
                     className="ml-2 text-orange-600 hover:text-orange-800"
                   >
-                    {/* <IoCloseCircle size={14} /> */}
+                    <IoCloseCircle size={14} />
                   </button>
                 </div>
               ))}
@@ -510,22 +523,6 @@ const TechnicalForm = ({ form }) => {
           )}
         </div>
       </div>
-
-      {/* Form Actions */}
-      {/* <div className="flex justify-end space-x-4 pt-6">
-        <button
-          type="button"
-          className="px-6 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50"
-        >
-          Discard Changes
-        </button>
-        <button
-          type="submit"
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-        >
-          Save Changes
-        </button>
-      </div> */}
     </form>
   );
 };

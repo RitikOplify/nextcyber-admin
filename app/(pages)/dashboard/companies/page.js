@@ -225,7 +225,7 @@ export default function Page() {
                       </td>
                       <td className="py-3 px-5 border-b border-border">
                         <div className=" flex gap-1 items-center">
-                          <Link href={`/student/${user.id}`}>
+                          <Link href={`/companies/${user.id}`}>
                             <img
                               src="/icons/view.svg"
                               className="h-6 w-6"
